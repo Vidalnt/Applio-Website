@@ -102,7 +102,7 @@ export default function ApplioAI({
 							messages: [
 								{
 									role: "system",
-									content: `Improve the following description, keeping key facts about the person's life, career, and major achievements. Keep specific examples of their work and avoid reducing it to just a list of roles. The description is: "${jinaDescription}". Respond with only the improved text, no introductions or extra commentary. Limit to 500 characters. Don't use markdown.`,
+									content: `Improve the following description to enhance its coherence and structure while preserving key facts about the person's life, career, and major achievements. Include specific examples of their work. **Do not include any introductory phrases or formatting like "Here's an improved description" or "Rewritten description".** Provide only the improved text without any introductory phrases or newline characters. The description is: "${jinaDescription}". Limit to 500 characters. Don't use markdown.`,
 								},
 							],
 							max_tokens: 100,
@@ -175,18 +175,8 @@ export default function ApplioAI({
 				throw new Error(`fetch error: ${response.statusText}`);
 			}
 
-			const data = await response.text();
-
-			const regex =
-				/Description:\s*([^]*?)(?=\[1\] (Markdown Content|Published Time|Title|URL Source):|\.\.\.|$)/i;
-			const match = data.match(regex);
-			console.log("jira", match);
-			if (match && match[1]) {
-				const description = match[1].trim();
-				return description;
-			} else {
-				throw new Error("Not found");
-			}
+			const data = (await response.text()).slice(0,4562);
+			return data
 		} catch (error) {
 			console.error("Error fetching AI description:", error);
 		}
